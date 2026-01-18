@@ -1,0 +1,9 @@
+# Installation
+
+Create .env file from .env and change at least DJANGO_SECRET_KEY.
+
+Build and run:
+    docker compose up --build
+
+To run migrations
+    docker compose run django-web python manage.py migrate
