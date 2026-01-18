@@ -67,3 +67,6 @@ cover/
 
 # Translations
 *.mo
+
+#Environment secrets
+.env
