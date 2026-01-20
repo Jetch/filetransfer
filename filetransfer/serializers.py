@@ -30,7 +30,7 @@ class FileUploadSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        organization = user.profile.organization
+        organization = user.organization
 
         return File.objects.create(
             file=validated_data["file"],
