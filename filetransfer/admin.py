@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import User, Organization, File, Download
+from .models.user import User
+from .models.organization import Organization
+from .models.file import File
+from .models.download import Download
 
 admin.site.register(User)
 admin.site.register(Organization)

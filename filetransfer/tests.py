@@ -1,14 +1,12 @@
-from django.test import TestCase
-
-import io
-
-from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Download, File, Organization, User
+from .models.user import User
+from .models.organization import Organization
+from .models.file import File
+from .models.download import Download
 
 class BaseAPITestCase(APITestCase):
     def setUp(self):

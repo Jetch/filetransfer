@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from filetransfer.models import Organization, User, File, Download
+#from filetransfer.models import Organization, User, File, Download
+from .models.user import User
+from .models.organization import Organization
+from .models.file import File
+from .models.download import Download
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
