@@ -12,7 +12,7 @@ class File(models.Model):
         on_delete=models.CASCADE,
         related_name="uploaded_files"
         )
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="files")
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, db_index=True, related_name="files")
 
     def __str__(self):
         return self.filename
