@@ -11,6 +11,9 @@ from filetransfer.models.file import File
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def download_file(request, file_id):
+    """
+    Downloads a file.
+    """
     file_obj = get_object_or_404(File, id=file_id)
 
     Download.objects.create(

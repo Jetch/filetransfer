@@ -9,6 +9,9 @@ from filetransfer.serializers.user import UserDownloadSerializer
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_downloads(request, user_id):
+    """
+    List all downloads of a user.
+    """
     downloads = (
         Download.objects
         .filter(user=user_id)

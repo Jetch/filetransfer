@@ -13,6 +13,9 @@ from filetransfer.serializers.file import FileUploadSerializer, FileListSerializ
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def upload_file(request):
+    """
+    Create a new file.
+    """
     serializer = FileUploadSerializer(
         data=request.data,
         context={"request": request}
@@ -25,6 +28,9 @@ def upload_file(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_files(request):
+    """
+    List all files.
+    """
     files = (
         File.objects
         .select_related("uploaded_by", "organization")
@@ -38,6 +44,9 @@ def list_files(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def file_downloads(request, file_id):
+    """
+    List all downloads of a file.
+    """
     downloads = (
         Download.objects
         .filter(file_id=file_id)
