@@ -21,7 +21,6 @@ class FileUploadSerializer(serializers.ModelSerializer):
             uploaded_by=user,
             organization=organization,
         )
-    
 
 class FileListSerializer(serializers.ModelSerializer):
     uploaded_by = UserSerializer(read_only=True)
@@ -41,4 +40,3 @@ class FileListSerializer(serializers.ModelSerializer):
             "uploaded_at",
             "download_count",
         ]
-

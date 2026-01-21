@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from ..models.download import Download
-from ..models.user import User
+from filetransfer.models.download import Download
+from filetransfer.models.user import User
 
 class UserSerializer(serializers.ModelSerializer):
     organization = serializers.CharField(
@@ -23,7 +23,6 @@ class UserDownloadSerializer(serializers.ModelSerializer):
         source="file.filename",
         read_only=True
     )
-    
 
     class Meta:
         model = Download

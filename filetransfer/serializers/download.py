@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models.download import Download
+from filetransfer.models.download import Download
 
 class FileDownloadSerializer(serializers.ModelSerializer):
     user = serializers.CharField(
