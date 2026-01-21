@@ -9,7 +9,7 @@ from filetransfer.serializers.organization import OrganizationSerializer
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def list_organizations(request):
+def organization_list(request):
     """
     Lists all organization with download count.
     """

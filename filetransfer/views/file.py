@@ -1,4 +1,6 @@
 from django.db.models import Count
+from django.shortcuts import get_object_or_404
+from django.http import FileResponse
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -10,36 +12,24 @@ from filetransfer.models.file import File
 from filetransfer.serializers.download import FileDownloadSerializer
 from filetransfer.serializers.file import FileUploadSerializer, FileListSerializer
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def upload_file(request):
-    """
-    Create a new file.
-    """
-    serializer = FileUploadSerializer(
-        data=request.data,
-        context={"request": request}
-    )
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def list_files(request):
+def file_download(request, file_id):
     """
-    List all files.
+    Downloads a file and creates record of it.
     """
-    files = (
-        File.objects
-        .select_related("uploaded_by", "organization")
-        .annotate(download_count=Count("downloads"))
-        .order_by("-uploaded_at")
+    file_obj = get_object_or_404(File, id=file_id)
+
+    Download.objects.create(
+        file=file_obj,
+        user=request.user
     )
 
-    serializer = FileListSerializer(files, many=True)
-    return Response(serializer.data)
+    return FileResponse(
+        file_obj.file.open("rb"),
+        as_attachment=True,
+        filename=file_obj.filename
+    )
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -56,3 +46,30 @@ def file_downloads(request, file_id):
 
     serializer = FileDownloadSerializer(downloads, many=True)
     return Response(serializer.data)
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def file_list(request):
+    """
+    List all files, or create a new file.
+    """
+    if request.method == "GET":
+        files = (
+            File.objects
+            .select_related("uploaded_by", "organization")
+            .annotate(download_count=Count("downloads"))
+            .order_by("-uploaded_at")
+        )
+
+        serializer = FileListSerializer(files, many=True)
+        return Response(serializer.data)
+
+    elif request.method == "POST":
+        serializer = FileUploadSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

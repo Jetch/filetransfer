@@ -29,32 +29,6 @@ class BaseAPITestCase(APITestCase):
 
         self.client.login(username="user1", password="password123")
 
-class UploadFileTests(BaseAPITestCase):
-    """Tests for file upload"""
-    def test_upload_file(self):
-        """Testing simple txt file upload"""
-        url = reverse("upload-file")
-
-        uploaded_file = SimpleUploadedFile(
-            "test.txt",
-            b"Hello world",
-            content_type="text/plain"
-        )
-
-        response = self.client.post(
-            url,
-            {"file": uploaded_file},
-            format="multipart"
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(File.objects.count(), 1)
-
-        file_obj = File.objects.first()
-        self.assertEqual(file_obj.uploaded_by, self.user1)
-        self.assertEqual(file_obj.organization, self.org1)
-        self.assertEqual(file_obj.filename, "test.txt")
-
 class FileListTests(BaseAPITestCase):
     """Tests for file list"""
     def setUp(self):
@@ -70,13 +44,37 @@ class FileListTests(BaseAPITestCase):
         Download.objects.create(file=self.file, user=self.user1)
         Download.objects.create(file=self.file, user=self.user2)
 
-    def test_list_files_with_download_count(self):
+    def test_file_list_with_download_count(self):
         """Testing file listing with download count"""
-        url = reverse("list-files")
+        url = reverse("file-list")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data[0]["download_count"], 2)
+
+    def test_file_list_post(self):
+        """Testing simple txt file upload"""
+        url = reverse("file-list")
+
+        uploaded_file = SimpleUploadedFile(
+            "test.txt",
+            b"Hello world",
+            content_type="text/plain"
+        )
+
+        response = self.client.post(
+            url,
+            {"file": uploaded_file},
+            format="multipart"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(File.objects.count(), 2)
+
+        file_obj = File.objects.last()
+        self.assertEqual(file_obj.uploaded_by, self.user1)
+        self.assertEqual(file_obj.organization, self.org1)
+        self.assertEqual(file_obj.filename, "test.txt")
 
 
 class DownloadFileTests(BaseAPITestCase):
@@ -93,7 +91,7 @@ class DownloadFileTests(BaseAPITestCase):
 
     def test_download_creates_record(self):
         """Testing download file and expects record showing it"""
-        url = reverse("download-file", args=[self.file.id])
+        url = reverse("file-download", args=[self.file.id])
 
         response = self.client.get(url)
 
@@ -128,7 +126,7 @@ class OrganizationListTests(BaseAPITestCase):
 
     def test_organization_download_count(self):
         """Testing Organization list with download count"""
-        url = reverse("list-organizations")
+        url = reverse("organization-list")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -186,9 +184,9 @@ class FileDownloadListTests(BaseAPITestCase):
 
 class AuthenticationTests(APITestCase):
     """Tests for authentication requirement"""
-    def test_auth_required_upload_file(self):
+    def test_auth_required_file_list_post(self):
         """Testing authentication requirement in file upload"""
-        url = reverse("upload-file")
+        url = reverse("file-list")
 
         uploaded_file = SimpleUploadedFile(
             "test.txt",
@@ -204,23 +202,23 @@ class AuthenticationTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_auth_required_list_files(self):
+    def test_auth_required_file_list_get(self):
         """Testing authentication requirement in file list"""
-        url = reverse("list-files")
+        url = reverse("file-list")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_auth_required_list_organizations(self):
+    def test_auth_required_organization_list(self):
         """Testing authentication requirement in organization list"""
-        url = reverse("list-organizations")
+        url = reverse("organization-list")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_auth_required_download_file(self):
         """Testing authentication requirement in download file"""
-        url = reverse("download-file", args=[1])
+        url = reverse("file-download", args=[1])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
