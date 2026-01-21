@@ -7,16 +7,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models.organization import Organization
-from .models.file import File
-from .models.download import Download
-from .serializers import (
-    FileUploadSerializer,
-    FileListSerializer,
-    OrganizationSerializer,
-    UserDownloadSerializer,
-    FileDownloadSerializer,
-)
+from filetransfer.models.download import Download
+from filetransfer.models.file import File
+from filetransfer.models.organization import Organization
+from filetransfer.serializers.download import FileDownloadSerializer
+from filetransfer.serializers.file import FileUploadSerializer, FileListSerializer
+from filetransfer.serializers.organization import OrganizationSerializer
+from filetransfer.serializers.user import UserDownloadSerializer
 
 
 @api_view(["POST"])

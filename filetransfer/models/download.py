@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from .file import File
+from filetransfer.models.file import File
 
 class Download(models.Model):
     downloaded_at = models.DateTimeField(auto_now_add=True)
